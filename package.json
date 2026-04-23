@@ -15,7 +15,9 @@
     "rollback": "node update-system.mjs rollback",
     "liveness": "node check-liveness.mjs",
     "scan": "node scan.mjs",
-    "gemini:eval": "node gemini-eval.mjs"
+    "gemini:eval": "node gemini-eval.mjs",
+    "notion:upsert": "node integrations/notion/sync.mjs upsert-eval",
+    "notion:applied": "node integrations/notion/sync.mjs mark-applied"
   },
   "keywords": [
     "ai",
