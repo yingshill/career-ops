@@ -92,12 +92,24 @@ Notas:
 - [Sugerencias de personalización que el candidato debería revisar]
 ```
 
-## Paso 6 — Post-apply (opcional)
+## Paso 6 — Post-apply
 
 Si el candidato confirma que envió la aplicación:
 1. Actualizar estado en `applications.md` de "Evaluada" a "Aplicado"
 2. Actualizar Section G del report con las respuestas finales
 3. Sugerir siguiente paso: `/career-ops contacto` para LinkedIn outreach
+
+### Sync to Notion Job Tracker
+
+After updating `applications.md`, also mark the row as applied in Notion:
+
+```bash
+node integrations/notion/sync.mjs mark-applied --url <postingUrl> --status "Applied"
+```
+
+The `<postingUrl>` is the original job posting URL from the report. This sets `Applied = ✅` and `Application Status = "Applied"` in the Notion Job Tracker database.
+
+If `NOTION_TOKEN` or `NOTION_DATABASE_ID` are not set, log the error but do not block the workflow.
 
 ## Scroll handling
 

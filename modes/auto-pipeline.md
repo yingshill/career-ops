@@ -66,3 +66,16 @@ Si el score final es >= 4.5, generar borrador de respuestas para el formulario d
 Registrar en `data/applications.md` con todas las columnas incluyendo Report y PDF en ✅.
 
 **Si algún paso falla**, continuar con los siguientes y marcar el paso fallido como pendiente en el tracker.
+
+## Paso 6 — Sync to Notion Job Tracker
+
+After the tracker is updated, sync the evaluation to Notion.
+
+1. **Emit the JSON payload** file `reports/{###}-{company-slug}-{YYYY-MM-DD}.notion.json` (same shape as defined in `modes/oferta.md` Post-evaluación Step 3).
+2. **Run the Notion upsert:**
+
+```bash
+node integrations/notion/sync.mjs upsert-eval --file reports/{###}-{company-slug}-{YYYY-MM-DD}.notion.json
+```
+
+If `NOTION_TOKEN` or `NOTION_DATABASE_ID` are not set, log the error and continue — do not block the pipeline.
