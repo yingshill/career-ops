@@ -1,8 +1,21 @@
 # Personal data (user fills these)
 cv.md
+cv-de.md
+routes/**/cv.md
+routes/**/profile.yml
+routes/**/_profile.md
+reports/*.notion.json
+
+# Bullet bank — domain bullets are personal data; registry + guides + README are generic
+bullet-bank/domains/
+
+# Interview prep — personal narrative / company-specific (user layer)
+interview-prep/
 data/applications.md
 data/pipeline.md
 data/scan-history.tsv
+data/events-pipeline.md
+data/events/
 reports/*.md
 !reports/.gitkeep
 output/*
@@ -25,6 +38,8 @@ modes/_profile.md
 
 # Secrets (never commit — use .env.example as template)
 .env
+.credentials/
+credentials/
 
 # Generated
 .resolved-prompt-*
@@ -41,3 +56,5 @@ bun.lock
 .claude/memory/
 career-dashboard
 package-lock.json
+# Resume specs (personal, JD-tailored)
+resume-specs/
