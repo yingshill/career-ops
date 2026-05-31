@@ -73,6 +73,20 @@ async function upsertByLink(payload, { defaultStatus } = {}) {
 	return { action: 'created', pageId: created.id };
 }
 
+function titleFromUrl(url) {
+	try {
+		const segments = new URL(url).pathname.split('/').filter(Boolean);
+		const last = segments[segments.length - 1] || '';
+		const slug = last
+			.replace(/[-_]?\d{8,}$/, '')
+			.replace(/[-_]/g, ' ')
+			.trim();
+		return slug || segments.slice(-2).join(' ') || url;
+	} catch {
+		return url;
+	}
+}
+
 function printHelp() {
 	console.log(`Notion Job Tracker sync
 
@@ -116,13 +130,16 @@ async function main() {
 			payload.postingUrl = args.url;
 			payload.applied = true;
 			payload.applicationStatus = targetStatus;
-			if (!payload.jobTitle) payload.jobTitle = args.title || 'Untitled';
+			if (!payload.jobTitle) payload.jobTitle = args.title || titleFromUrl(args.url);
 			const properties = toJobTrackerProperties(payload);
 			const created = await createPage(properties);
 			console.log(`✓ created (applied) Notion page ${created.id}`);
 			return;
 		}
-		const properties = toJobTrackerProperties({ applied: true, applicationStatus: targetStatus });
+		const updates = { applied: true, applicationStatus: targetStatus };
+		if (args.title) updates.jobTitle = args.title;
+		if (args.company) updates.company = args.company;
+		const properties = toJobTrackerProperties(updates);
 		await updatePage(existing.id, properties);
 		console.log(`✓ marked applied: ${existing.id}`);
 		return;

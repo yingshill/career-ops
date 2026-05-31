@@ -17,7 +17,8 @@
     "scan": "node scan.mjs",
     "gemini:eval": "node gemini-eval.mjs",
     "notion:upsert": "node integrations/notion/sync.mjs upsert-eval",
-    "notion:applied": "node integrations/notion/sync.mjs mark-applied"
+    "notion:applied": "node integrations/notion/sync.mjs mark-applied",
+    "events:sync": "node sync-events-calendar.mjs"
   },
   "keywords": [
     "ai",
@@ -36,6 +37,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.5",
+    "googleapis": "^144.0.0",
     "js-yaml": "^4.1.1",
     "playwright": "^1.58.1"
   }
