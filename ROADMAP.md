@@ -1,11 +1,11 @@
 # Roadmap — career-ops (Yingshi Liu)
 
-_Last updated: 2026-05-31_
+_Last updated: 2026-06-03_
 
 ## Done
 - **Events arc** (networking, 2026-05-29→31): `modes/events.md` (scan Luma/Eventbrite/Meetup for free/≤$50 Bay Area workshops + meetups), `sync-events-calendar.mjs` (Google Calendar sync), `data/events-pipeline.md` tracker, per-event prep notes in `data/events/` (personal, gitignored). Wired into `SKILL.md` as `/career-ops events`. First event attended: Agent Campus / FounderGro @ TikTok SJ (2026-06-07) — warm-channel founder prep captured (Clawvard, AdalFlow, Heji, Infron, Rena Labs).
 - **Scanner location filter**: `scan.mjs` gained `buildLocationFilter` (config `location_filter.allowed`; remote/blank always pass) — supports the contractor/local URGENT focus.
-- **Multi-route architecture** (`routes/` + `active_route`): `pm` (Elena, active, complete), `data-engineer` (Lydia, CV only), `data-analyst` (empty).
+- **Multi-route architecture** (`routes/` + `active_route`): `pm` (Elena, active, complete), `sa-fde` (Iris, Solutions Architect / Forward Deployed Engineer — full profile + CV + _profile, 2026-06-03), `data-engineer` (Lydia, CV only), `data-analyst` (empty).
 - **Resume system**: Classic ATS layout; two renderers — `build_pm_resume.py` (exact original-template formatting, local delivery) and `generate-docx.py` (small uploadable minimal-OOXML). Delivery = editable .docx, never PDF.
 - **Bullet-bank system** (`bullet-bank/`): three layers —
   - `COMPETENCIES.md` registry (C01–C15) + domain×competency matrix (cols: T&S, AI Ops, Product Ops, Data Eng, Data Analytics)
@@ -30,6 +30,14 @@ _Last updated: 2026-05-31_
 - Define Data Engineer persona (`profile.yml` + `_profile.md`) and Data Analyst route (from scratch).
 - Add `portfolio_url` to profile once provided; wire into outreach.
 - Data Analytics / Product Ops domain guides + bullets.
+
+### sa-fde route (new, 2026-06-03 — runs alongside; contractor stays primary)
+- ⚠️ **Real email for Iris** — `irisliu.sa@gmail.com` is a placeholder; confirm/replace before this route applies anywhere. Add the SA/FDE LinkedIn URL too.
+- **AWS Solutions Architect Associate (SAA) cert** — ~$150, ~3–4 wks; frequent SA gate, high ROI. Not on CV until earned.
+- **FDE interview prep** — DS&A + system design — required before targeting FDE-lead roles. SA/SE roles are the faster, lower-coding entry.
+- **SA/FDE bullet-bank domain** — add `guides/` + `domains/` files (solution design, deployment, technical translation) reusing competencies where possible.
+- **`portals.yml` queries** — add SA/FDE/SE/Customer-Engineer positives + a non-frontier company set (Databricks, Snowflake, dbt Labs, Retool, Vercel, Glean, etc.) for when this route activates.
+- **Portfolio artifact** — a public "deploy an LLM/agent to a real workflow" POC-to-prod demo (the strongest SA/FDE proof point).
 
 ## Repo hygiene (2026-05-31 audit)
 - **Branch mismatch:** on `feature/notion-job-tracker`, but the Notion feature is already merged in history; current WIP is the Resume + Events arcs. Land WIP and cut a correctly-named branch (or rename), don't keep piling unrelated arcs on this branch.

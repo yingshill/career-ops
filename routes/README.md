@@ -14,6 +14,7 @@ career-ops runs **one workflow** (oferta, ofertas, pdf, apply, scan, pipeline, �
 | Route slug | Persona | Covers | Identity | CV source |
 |------------|---------|--------|----------|-----------|
 | `pm` | Elena | Trust & Safety PM, Product Operation PM, Program/Project Mgmt | Yingshi (Elena) Liu | `routes/pm/cv.md` |
+| `sa-fde` | Iris | Solutions Architect, Forward Deployed Engineer, Solutions/Sales Engineer, Customer Engineer | Iris Liu | `routes/sa-fde/cv.md` |
 | `data-engineer` | Lydia | Data Engineer | Lydia Liu | `routes/data-engineer/cv.md` |
 | `data-analyst` | _(TBD)_ | Data Analyst | _(TBD)_ | `routes/data-analyst/cv.md` |
 
@@ -32,7 +33,7 @@ Each `routes/{slug}/` folder owns three user-layer files — never auto-updated:
 `config/profile.yml` carries one pointer:
 
 ```yaml
-active_route: pm   # one of: pm | data-engineer | data-analyst
+active_route: pm   # one of: pm | sa-fde | data-engineer | data-analyst
 ```
 
 **Rule for the agent:** at the start of any mode, read `config/profile.yml` → `active_route`, then load that route's `cv.md`, `profile.yml`, and `_profile.md` from `routes/{active_route}/` instead of the root copies. The root `cv.md` / `config/profile.yml` remain a mirror of the active route so legacy scripts keep working.
