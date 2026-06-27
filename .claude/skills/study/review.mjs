@@ -25,3 +25,8 @@ export function parseDeck(md) {
 export function dueCards(cards, today) {
   return cards.filter((c) => c.due <= today);
 }
+
+export function grade(card, result, today) {
+  const box = result === 'pass' ? Math.min(5, card.box + 1) : 1;
+  return { ...card, box, due: addDays(today, INTERVALS[box]) };
+}

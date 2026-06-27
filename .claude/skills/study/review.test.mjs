@@ -47,3 +47,26 @@ test('dueCards returns cards due on or before today', () => {
   const due = dueCards(cards, '2026-06-26');
   assert.deepEqual(due.map((c) => c.id), ['1', '2']);
 });
+
+import { grade } from './review.mjs';
+
+test('grade pass bumps the box and pushes due out', () => {
+  const card = { id: '1', q: 'a', a: 'a', box: 2, due: '2026-06-26' };
+  const out = grade(card, 'pass', '2026-06-26');
+  assert.equal(out.box, 3);           // 2 -> 3
+  assert.equal(out.due, '2026-06-30'); // today + INTERVALS[3] (4 days)
+});
+
+test('grade pass caps the box at 5', () => {
+  const card = { id: '1', q: 'a', a: 'a', box: 5, due: '2026-06-26' };
+  const out = grade(card, 'pass', '2026-06-26');
+  assert.equal(out.box, 5);
+  assert.equal(out.due, '2026-07-12'); // today + 16 days
+});
+
+test('grade fail resets the box to 1', () => {
+  const card = { id: '1', q: 'a', a: 'a', box: 4, due: '2026-06-26' };
+  const out = grade(card, 'fail', '2026-06-26');
+  assert.equal(out.box, 1);
+  assert.equal(out.due, '2026-06-27'); // today + 1 day
+});
