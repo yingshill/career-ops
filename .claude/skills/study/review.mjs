@@ -1,0 +1,23 @@
+export const INTERVALS = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 };
+
+export function addDays(dateStr, n) {
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+export function parseDeck(md) {
+  const cards = [];
+  const skipped = [];
+  const rows = md.split('\n').filter((l) => l.trim().startsWith('|'));
+  for (const row of rows) {
+    const cells = row.split('|').slice(1, -1).map((c) => c.trim());
+    if (cells[0] === 'id' || /^-+$/.test(cells[0] || '')) continue; // header / separator
+    if (cells.length !== 5) { skipped.push(row); continue; }
+    const [id, q, a, box, due] = cells;
+    const boxNum = Number(box);
+    if (!Number.isInteger(boxNum) || boxNum < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(due)) { skipped.push(row); continue; }
+    cards.push({ id, q, a, box: boxNum, due });
+  }
+  return { cards, skipped };
+}
