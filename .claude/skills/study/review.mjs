@@ -1,3 +1,6 @@
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { pathToFileURL } from 'url';
+
 export const INTERVALS = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 };
 
 export function addDays(dateStr, n) {
@@ -45,3 +48,56 @@ export function replaceTable(md, cards) {
   const last = tableIdx[tableIdx.length - 1];
   return [...lines.slice(0, first), renderTable(cards), ...lines.slice(last + 1)].join('\n');
 }
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function main(argv) {
+  const deckPath = argv[2];
+  if (!deckPath) {
+    console.error('Usage: node review.mjs <deck.md> [--grade <id> <pass|fail>]');
+    process.exit(1);
+  }
+  if (!existsSync(deckPath)) {
+    console.error(`Deck not found: ${deckPath}`);
+    process.exit(1);
+  }
+  const md = readFileSync(deckPath, 'utf-8');
+  const { cards, skipped } = parseDeck(md);
+  if (skipped.length) console.error(`⚠️  Skipped ${skipped.length} malformed row(s).`);
+
+  const gi = argv.indexOf('--grade');
+  if (gi !== -1) {
+    const id = argv[gi + 1];
+    const result = argv[gi + 2];
+    if (!['pass', 'fail'].includes(result)) {
+      console.error('Grade must be pass|fail');
+      process.exit(1);
+    }
+    const card = cards.find((c) => c.id === id);
+    if (!card) {
+      console.error(`No card with id ${id}`);
+      process.exit(1);
+    }
+    const updated = grade(card, result, todayStr());
+    const newCards = cards.map((c) => (c.id === id ? updated : c));
+    writeFileSync(deckPath, replaceTable(md, newCards));
+    console.log(`Card ${id}: ${result} → box ${updated.box}, next due ${updated.due}`);
+    return;
+  }
+
+  if (!cards.length) {
+    console.log('Deck is empty — add some cards.');
+    return;
+  }
+  const due = dueCards(cards, todayStr());
+  if (!due.length) {
+    console.log('✅ Nothing due today.');
+    return;
+  }
+  console.log(`📇 ${due.length} card(s) due today:\n`);
+  for (const c of due) console.log(`  [${c.id}] Q: ${c.q}`);
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) main(process.argv);
