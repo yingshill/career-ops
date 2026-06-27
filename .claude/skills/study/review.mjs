@@ -30,3 +30,18 @@ export function grade(card, result, today) {
   const box = result === 'pass' ? Math.min(5, card.box + 1) : 1;
   return { ...card, box, due: addDays(today, INTERVALS[box]) };
 }
+
+export function renderTable(cards) {
+  const header = '| id | Q | A | box | due |\n|----|---|---|-----|-----|';
+  const rows = cards.map((c) => `| ${c.id} | ${c.q} | ${c.a} | ${c.box} | ${c.due} |`);
+  return [header, ...rows].join('\n');
+}
+
+export function replaceTable(md, cards) {
+  const lines = md.split('\n');
+  const tableIdx = lines.map((l, i) => (l.trim().startsWith('|') ? i : -1)).filter((i) => i >= 0);
+  if (tableIdx.length === 0) return `${md.trimEnd()}\n\n${renderTable(cards)}\n`;
+  const first = tableIdx[0];
+  const last = tableIdx[tableIdx.length - 1];
+  return [...lines.slice(0, first), renderTable(cards), ...lines.slice(last + 1)].join('\n');
+}

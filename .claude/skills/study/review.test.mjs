@@ -70,3 +70,29 @@ test('grade fail resets the box to 1', () => {
   assert.equal(out.box, 1);
   assert.equal(out.due, '2026-06-27'); // today + 1 day
 });
+
+import { renderTable, replaceTable } from './review.mjs';
+
+test('renderTable emits a header, separator, and one row per card', () => {
+  const out = renderTable([{ id: '1', q: 'a', a: 'b', box: 2, due: '2026-06-28' }]);
+  const lines = out.split('\n');
+  assert.equal(lines[0], '| id | Q | A | box | due |');
+  assert.equal(lines[1], '|----|---|---|-----|-----|');
+  assert.equal(lines[2], '| 1 | a | b | 2 | 2026-06-28 |');
+});
+
+test('replaceTable preserves the preamble and swaps the table', () => {
+  const md = [
+    '# Deck',
+    '',
+    'some preamble',
+    '',
+    '| id | Q | A | box | due |',
+    '|----|---|---|-----|-----|',
+    '| 1 | a | b | 1 | 2026-06-26 |',
+  ].join('\n');
+  const out = replaceTable(md, [{ id: '1', q: 'a', a: 'b', box: 2, due: '2026-06-28' }]);
+  assert.ok(out.includes('some preamble'));
+  assert.ok(out.includes('| 1 | a | b | 2 | 2026-06-28 |'));
+  assert.ok(!out.includes('2026-06-26'));
+});
