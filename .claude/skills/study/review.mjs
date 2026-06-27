@@ -21,3 +21,7 @@ export function parseDeck(md) {
   }
   return { cards, skipped };
 }
+
+export function dueCards(cards, today) {
+  return cards.filter((c) => c.due <= today);
+}

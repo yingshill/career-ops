@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { addDays, parseDeck, INTERVALS } from './review.mjs';
+import { dueCards } from './review.mjs';
 
 test('INTERVALS are the Leitner steps', () => {
   assert.deepEqual(INTERVALS, { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 });
@@ -35,4 +36,14 @@ test('parseDeck skips malformed rows', () => {
   const { cards, skipped } = parseDeck(md);
   assert.equal(cards.length, 0);
   assert.equal(skipped.length, 3);
+});
+
+test('dueCards returns cards due on or before today', () => {
+  const cards = [
+    { id: '1', q: 'a', a: 'a', box: 1, due: '2026-06-25' },
+    { id: '2', q: 'b', a: 'b', box: 1, due: '2026-06-26' },
+    { id: '3', q: 'c', a: 'c', box: 1, due: '2026-06-27' },
+  ];
+  const due = dueCards(cards, '2026-06-26');
+  assert.deepEqual(due.map((c) => c.id), ['1', '2']);
 });
