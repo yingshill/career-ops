@@ -7,9 +7,11 @@
 > - [model-qa-glossary.md](./model-qa-glossary.md) — **terms 术语** (baseline · precision · calibration · drift)
 >
 > **Concept routing ｜ 哪个概念放哪:**
+>
 > - general software-testing (test pyramid · regression · severity) → **qa-automation**
 > - ML / model-eval terms (AUC · calibration · drift) → **glossary**
 > - safety domain (policy · abuse · regulation) → **[trust-safety](./trust-safety.md)**
+> - behavioral / situational interview Q&A (sacrificed quality · no-docs · bug triage · plan vs strategy · prioritize) → **[qa-at-scale](./qa-at-scale.md)** (frameworks) + your per-company run-sheet (your STAR)
 > - precision/recall live in both (testing concept → qa-automation · model metric → glossary).
 
 **What this is** The full QA flow for a model update, from "you're notified" to "you give a ship/no-ship call." ｜ 一个 model 更新从「被通知」到「给发布结论」的完整 QA 流程(workflow 深度展开)。
@@ -105,32 +107,30 @@ These terms come up constantly — remember "what it is / what's inside / what y
 
 🟢 **String it together (interview) ｜ 面试串起来说:** "I read the **ticket** for context, the **diff** for what specifically changed, the **model card / registry** for baseline + per-segment metrics, the **design doc** for motivation and the author's anticipated risks — then bring specific questions to the SWE to confirm." ｜ (中文同上 §2 面试点。)
 
-## 3 · After alignment, execute step by step ｜ 确认后,一步一步执行
+## 3 · After alignment, execute step by step
+
+🟢 **Where the effort actually goes (rule of thumb, [inferred]) ｜ 精力实际花在哪:** the distribution is **uneven** — about **half** the work is **Step 2 (validate the eval data, ~25–30%) + Step 7 (error analysis, ~20–25%)**, the two **un-automatable, human-judgment** steps. **Steps 3–4 (run + compute) are automated and cheap** — running the benchmark is _not_ the work. Judging/reporting (9, 11, 12) is quick. ｜ 不均:约一半在**步骤2(校验数据)+步骤7(错误分析)**,这俩不能自动化;跑测(3、4)是自动的、最省力。 _(「data ≈ 80% of ML」是公认经验 [public];具体百分比是估算 [inferred]。)_
 
 1. **Write the test plan / test cases** — scope + metrics + exit criteria; clear in-scope / out-of-scope. ｜ 写 test plan / test cases(范围+指标+exit criteria)。
-2. **Prepare + validate the eval data** — confirm the golden set is labeled; check for missing/wrong labels, distribution skew. Bad data → everything downstream is wasted. ｜ 准备+校验评测数据(标注质量);数据有问题,后面全白测。
+2. **Prepare + validate the eval data** ⏳~25–30% — the golden set is the answer key; if it's wrong, every metric is meaningless. ｜ 准备+校验评测数据;数据错,指标全废。
+   - _How / 怎么验:_ **representative** of recent production? · **label quality** (sample re-label vs policy + **IAA**) · **covers edge/new/rare cases** · **no train/eval overlap** (dedup) · **fresh** + enough positives.
+   - _Output:_ a **trusted** eval set, or a list of data fixes to do **before** benchmarking. ｜ 产出可信评测集,或先修数据再跑。
+   - _= your LeanData data-quality / validation scripts + Moody's eval datasets._
 3. **Run baseline AND candidate A on the same eval set** — two prediction sets, "everything but the model held constant" (control variables). ｜ 同一 eval set 上分别跑 baseline 和 candidate(控制变量)。
 4. **Compute metrics (benchmarking)** — precision / recall / FPR / accuracy + business metrics (for score-driven models, **calibration**, AUC). ｜ 算指标(benchmarking)。
 5. **Compare + regression-check** — did the target metric rise? **Did anything else regress?** (= regression testing for models). ｜ 对比+回归检查。
+   - _How:_ build a **baseline-vs-candidate table** (metric · baseline · candidate · Δ · pass?) — ① did the **target** improve, ② did any **guardrail** (precision/recall/FPR/calibration) get worse. ｜ 并排比目标+护栏指标。
+   - _What counts as a regression:_ a metric drops **below its threshold / beyond tolerance** (Step-1 exit criteria) — **not** every tiny dip; rule out **noise** (sampling variance / significance); watch the **precision–recall trade-off**. ｜ 跌破阈值且非噪声才算退化。
+   - _= your Safety Index:_ fixed thresholds, re-checked every release, **auto-gate + rollback on regression**. ｜ 就是你的 Safety Index 自动门控。
 6. **Slice analysis (by segment)** — split by language/region/content-type/group. **Overall up but a segment down** is the most common trap. ｜ 切片分析(按 segment)。
-7. **Error analysis (case / error review)** — look at the new FP/FN vs baseline, read logs/examples with the SWE, locate it: **data / logic / threshold** problem (uses reading code/logs). ｜ 错误分析。
+7. **Error analysis (case / error review)** ⏳~20–25% — where "recall dropped 4%" becomes "dropped _because_ X"; the real signal. ｜ 错误分析:把指标变成原因。
+   - _How / 怎么做:_ pull the **new FP/FN** (candidate wrong, baseline right) → **read the actual examples** → **cluster** by theme (a language? a new format? a subtype?) → **root-cause with eng: data / logic / threshold?** (read model logs + classifier code) → write up clusters + cause + blocker?
+   - _= your "reproduce, document, and triage model failures with engineering."_
 8. **Boundary & adversarial / safety testing** — construct edge cases + adversarial inputs, especially unsafe content. ｜ 边界 & 对抗 / 安全测试。
 9. **Judge against exit criteria** — pass / fail / conditional pass. ｜ 对照 exit criteria 判定。
 10. **File bugs + triage** — clean repro (which input, expected vs actual) + severity/priority, decide with the SWE. ｜ 提 bug + triage。
 11. **Write the quality report + ship recommendation** — comparison, slices, error analysis, risks on one page → **go / no-go / fix-these-first**. ｜ 写 quality report + 发布建议。
 12. **Release-readiness sign-off** — pass → sign off; fail → state the blocker, **retest** after the fix (back to step 3). ｜ Release-readiness sign-off;不过则修复后 retest(回第 3 步)。
-
-## 🔴 On the most severe content (CSAM) — different from ordinary unsafe content ｜ 关于最严重的内容(CSAM)
-
-- **EN:** The JD's "may be exposed to unsafe content" means violence / hate / adult etc.; **CSAM (child sexual abuse material) is the exception** — in the US, merely possessing/viewing it is itself a crime (18 U.S.C. §2252), so it does **not** go through ordinary labeling. ｜ JD 的「unsafe content」指暴力/仇恨/成人等;**CSAM 是例外**,持有/查看本身违法,不走普通标注。
-- **Distinction ｜ 区分:** ordinary "involving minors" content can be labeled normally; **CSAM (child sexual exploitation)** is the untouchable category. ｜ 普通涉未成年人内容可正常标注;CSAM 才是碰不得的。
-- **How it's handled ｜ 处理方式:** **hash matching** (PhotoDNA / NCMEC hash lists — auto-detect, no human views the original) → **mandatory NCMEC CyberTipline report** (18 U.S.C. §2258A) → a small, legally-authorized team handles it. ｜ hash matching → 强制上报 NCMEC → 专门受法律授权小团队。
-- 🟢 In an interview, answering this when asked "how do you handle the most severe content" shows compliance awareness. ｜ 面试答这套 = 显示懂合规,加分。
-- **[verified]** §2258A mandatory NCMEC reporting + PhotoDNA (built by Microsoft, used by Meta/Google etc.), match → auto-report with no human review — verified (see [Sources](#sources)); §2252 possession being illegal is established law **[public]**. (Not legal advice; defer to official/legal.) ｜ 已核实;非法律意见。
-
-- **Will QA handle raw CSAM? Almost certainly NOT directly ｜ QA 会直接碰 raw CSAM 吗?基本不会:**
-  - **[public]** General QA/content roles don't review/label raw CSAM — it's legally walled off to a specialized, cleared team; your "unsafe content" exposure = **hate / violence / adult / harassment / spam**, not CSAM. ｜ 普通 QA 不直接看/标 raw CSAM,法律隔离到专门团队;你接触的是 hate/暴力/成人等,不是 CSAM。
-  - **🔴 [VERIFY]** Ask the recruiter/HM: *"what content categories does the role cover, and what are the wellness protocols?"* — the smart, legitimate way to learn your actual scope. ｜ 直接问招聘方:覆盖哪些类别 + wellness 保护。
 
 ## ⚠️ The hardest / most error-prone parts (difficulties + pitfalls, with TikTok case studies) ｜ 最难 / 最易出错的环节
 
@@ -194,13 +194,15 @@ These terms come up constantly — remember "what it is / what's inside / what y
 ### B. Performance testing — own ①, ② is a ramp area ｜ 性能测试:认领 ①,② 是补强项
 
 🔴 **"Performance testing" 有两个意思 — 只 claim 你简历上的那个:**
-- **① Model performance benchmarking** (precision/recall/FPR, the quality gate) = **on your résumé, 真做过** —— Moody's *"automated benchmarking and performance-testing framework for AI models"* = your **Safety Index** = the whole **§A** set above. **这才是「你的」performance testing,尽管 claim。**
+
+- **① Model performance benchmarking** (precision/recall/FPR, the quality gate) = **on your résumé, 真做过** —— Moody's _"automated benchmarking and performance-testing framework for AI models"_ = your **Safety Index** = the whole **§A** set above. **这才是「你的」performance testing,尽管 claim。**
 - **② System / load performance** (latency / throughput / load 压测) = SRE / infra, **not on your résumé**,不是你的经历。
 
 **If they mean ② (system load) ｜ 若问的是系统压测,概念讲得溜即可(不展开成你的经历):**
+
 - 四类:**load**(预期峰值) · **stress**(超极限找断点) · **spike**(突发激增) · **soak**(长时间持续)。
 - 盯 **p99 尾延迟 + 吞吐 + 错误率 + 饱和点(knee)**,不是平均。
-- 然后诚实说:*"the concepts I know; the specific load-test tooling/process I'd ramp on fast."* —— **不 claim 做过大型 load test。**(更多见 [qa-at-scale §4](./qa-at-scale.md)。)
+- 然后诚实说:_"the concepts I know; the specific load-test tooling/process I'd ramp on fast."_ —— **不 claim 做过大型 load test。**(更多见 [qa-at-scale §4](./qa-at-scale.md)。)
 
 ### C. Process slips (low-level but common — just avoid) ｜ 流程疏忽
 
@@ -216,6 +218,21 @@ These terms come up constantly — remember "what it is / what's inside / what y
 **中文:** 这整套就是 Safety Index:每次发版自动在固定 eval set 上跑 precision/recall/FPR、和 baseline 比、退化就拦发布或回滚。面试照 12 步讲,最后点一句「这正是我在 Moody's 做的」。
 
 🔴 **[VERIFY — your résumé]** "Safety Index" and any specific numbers are **your claim** — I can't verify them; before the interview confirm each is true and defensible (against your real experience, per your "bullet = real + defensible" rule). ｜ 具体数字是你的 claim,面试前确认真实可辩护。
+
+---
+
+## 📎 Appendix — most severe content (CSAM): reference, not your day-to-day ｜ 附录:最严重内容(背景,非日常)
+
+**Why here, not up top ｜ 为什么放底部:** this is **background you can speak to if asked**, not part of your normal QA flow — you almost certainly never touch raw CSAM. Know it, don't lead with it. ｜ 这是被问到能答的背景,不是你日常流程;基本不会碰到,知道即可、别主动展开。
+
+- **EN:** The JD's "may be exposed to unsafe content" means violence / hate / adult etc.; **CSAM (child sexual abuse material) is the exception** — in the US, merely possessing/viewing it is itself a crime (18 U.S.C. §2252), so it does **not** go through ordinary labeling. ｜ JD 的「unsafe content」指暴力/仇恨/成人等;**CSAM 是例外**,持有/查看本身违法,不走普通标注。
+- **Distinction ｜ 区分:** ordinary "involving minors" content can be labeled normally; **CSAM (child sexual exploitation)** is the untouchable category. ｜ 普通涉未成年人内容可正常标注;CSAM 才是碰不得的。
+- **How it's handled ｜ 处理方式:** **hash matching** (PhotoDNA / NCMEC hash lists — auto-detect, no human views the original) → **mandatory NCMEC CyberTipline report** (18 U.S.C. §2258A) → a small, legally-authorized team handles it. ｜ hash matching → 强制上报 NCMEC → 专门受法律授权小团队。
+- 🟢 If asked "how do you handle the most severe content," answering this shows compliance awareness. ｜ 被问到时答这套 = 显示懂合规,加分。
+- **[verified]** §2258A mandatory NCMEC reporting + PhotoDNA (built by Microsoft, used by Meta/Google etc.), match → auto-report with no human review — verified (see [Sources](#sources)); §2252 possession being illegal is established law **[public]**. (Not legal advice; defer to official/legal.) ｜ 已核实;非法律意见。
+- **Will QA handle raw CSAM? Almost certainly NOT directly ｜ QA 会直接碰 raw CSAM 吗?基本不会:**
+  - **[public]** General QA/content roles don't review/label raw CSAM — it's legally walled off to a specialized, cleared team; your "unsafe content" exposure = **hate / violence / adult / harassment / spam**, not CSAM. ｜ 普通 QA 不直接看/标 raw CSAM,法律隔离到专门团队;你接触的是 hate/暴力/成人等,不是 CSAM。
+  - **🔴 [VERIFY]** Ask the recruiter/HM: _"what content categories does the role cover, and what are the wellness protocols?"_ — the smart, legitimate way to learn your actual scope. ｜ 直接问招聘方:覆盖哪些类别 + wellness 保护。
 
 ---
 
