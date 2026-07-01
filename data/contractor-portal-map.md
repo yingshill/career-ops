@@ -22,7 +22,8 @@ You keep a **separate portal account per target route** so applications never cr
 | Account (email) | Route / targeted roles | Default résumé on file | Portals using it |
 |---|---|---|---|
 | **yingshill.fin@gmail.com** | PM · Technical Program Manager · Program Manager (contract) | `Yingshi_Liu_Meta_MediaSufficiency_Technical_Program_Manager_IV.docx` | Meta CWX — **new acct, created 2026-06-30** · TPM résumé uploaded · **TPM IV Remote applied 2026-06-30** |
-| **yingshiliu.j@gmail.com** | QA Analyst · Business Analyst · Data Analyst · Trust & Safety (contract) | `Yingshi_Liu_QA_Analyst.docx` (interview-proven) | Meta CWX — existing acct (12 applied) |
+| **yingshiliu.j@gmail.com** | QA Analyst · Business Analyst · Data Analyst · Trust & Safety (contract) | `Yingshi_Liu_QA_Analyst.docx` (interview-proven) | Meta CWX — existing acct (12 applied) · Microsoft CWX — registered, skipped (thin) |
+| **elenaliu.bie@gmail.com** | Insight Global (warm consultant acct) + cross-client pools — Data Analyst/BI · QA/T&S · Risk/AML (contract) | IG default currently = `Yingshi_Liu_Data_Analyst.docx` (was Trust_Safety_Integrity earlier in the day; swap per route). QA + AML résumés also available to upload | **Insight Global** (jobs.insightglobal.com) — warm, auto-logged-in; **13 applied 2026-06-30** via Channel 3 (T&S ×2, data+QA ×11) · **Magnit Direct Sourcing** — registered, 0 applied (pool thin) |
 
 > New route → new account → register, upload that route's résumé, then add a row here.
 
@@ -62,7 +63,7 @@ _Parked per Elena — not pursuing these now. Verified URLs kept below only as f
 
 | Pool | URL | Note |
 |---|---|---|
-| **Magnit Direct Sourcing** [v] | magnitds.willhire.co | Magnit's own talent network — 600+ client base, open registration. Single sign-up, broad reach. |
+| **Magnit Direct Sourcing** [v] | magnitds.willhire.co | ⏭️ Registered 2026-06-30 (elenaliu.bie acct) but SKIPPED — reality check: pool shows only **~8 of Magnit's OWN direct-staffing roles**, NOT 600+ client jobs (that figure is client *base*, not visible postings). Single data fit (BI Analyst TEMP, Newark NJ **on-site**) skipped. Apply = manual form + résumé upload; recommendations need a completed profile. Low yield. |
 | **TalentNet Community** [v] | careers.talentnet.com | TalentNet's cross-brand community. Register for broad matching. |
 
 ---
