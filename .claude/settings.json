@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.pinterestcareers.com)",
+      "WebFetch(domain:www.reddit.com)",
+      "WebFetch(domain:sardine.ai)",
+      "Bash(node update-system.mjs check)",
+      "Bash(node update-system.mjs dismiss)",
+      "Bash(node verify-pipeline.mjs)",
+      "Bash(node normalize-statuses.mjs)",
+      "Bash(node dedup-tracker.mjs)"
+    ]
+  }
+}

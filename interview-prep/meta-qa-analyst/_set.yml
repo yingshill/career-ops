@@ -1,0 +1,34 @@
+# Doc-set manifest — single source of truth for the meta-qa-analyst interview-prep set.
+# The linter (check-prep-sync.mjs) diffs every connected doc against the facts below.
+# Edit a canonical fact HERE, then run `node check-prep-sync.mjs meta-qa-analyst`
+# to see which sibling docs still need updating. Guards global CLAUDE.md Failure-log F1.
+
+set: meta-qa-analyst
+applied_resume: output/Yingshi_Liu_QA_Analyst.docx
+spec: resume-specs/meta-qa-analyst.json
+
+files:
+  strategy: interview-prep/meta-qa-analyst/meta-qa-analyst-strategy.md
+  runsheet: interview-prep/meta-qa-analyst/meta-qa-analyst-runsheet.md
+  study:    interview-prep/meta-qa-analyst/qa-study-plan.md
+  practice_log: interview-prep/meta-qa-analyst/practice-log.md
+  recall_deck: interview-prep/meta-qa-analyst/recall-deck.md
+  report:   reports/115-meta-qa-analyst-2026-06-18.md
+
+checks:
+  # Job titles — must appear VERBATIM in the résumé spec + strategy + run-sheet.
+  titles:
+    - "Product Operations Manager (AI Quality Assurance & Test Automation)"
+    - "Trust & Safety Analyst (QA & Test Automation)"
+
+  # Framing phrases — must appear (case-insensitive) in BOTH strategy and run-sheet.
+  present_in_strategy_and_runsheet:
+    - "QA Concepts + Behavioral"      # the interview format
+    - "test automation"               # the lens Rafee asked us to foreground
+
+  # Headline metrics — must still appear in the run-sheet (catches number drift).
+  metrics_in_runsheet:
+    - "22%"
+    - "15%"
+    - "65%"
+    - "35%"
