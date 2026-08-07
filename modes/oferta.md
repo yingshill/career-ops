@@ -214,3 +214,37 @@ Guardar evaluación completa en `reports/{###}-{company-slug}-{YYYY-MM-DD}.md`.
 ```markdown
 | # | Fecha | Empresa | Rol | Score | Estado | PDF | Report |
 ```
+
+### 3. Sync to Notion Job Tracker
+
+**SIEMPRE** después de guardar el report y registrar en tracker, sync the evaluation to the Notion Job Tracker database.
+
+**Step A — Emit JSON payload** next to the report:
+
+Save a file `reports/{###}-{company-slug}-{YYYY-MM-DD}.notion.json` with this shape:
+
+```json
+{
+  "postingUrl": "<original job posting URL>",
+  "jobTitle": "<rol title>",
+  "company": "<company name>",
+  "location": "<location or Remote>",
+  "matchScore": <score 0-5>,
+  "domain": "<domain from Bloque A if it matches a DB option>",
+  "industry": "<industry if identifiable>",
+  "jobType": "Full-time",
+  "keywords": ["<keyword1>", "<keyword2>"],
+  "tailoringNotes": "<1-2 sentence summary of top personalisation angle from Bloque E>",
+  "postedDate": "<YYYY-MM-DD if available>",
+  "applicationStatus": "Not Applied",
+  "applied": false
+}
+```
+
+**Step B — Call the Notion sync CLI:**
+
+```bash
+node integrations/notion/sync.mjs upsert-eval --file reports/{###}-{company-slug}-{YYYY-MM-DD}.notion.json
+```
+
+If `NOTION_TOKEN` or `NOTION_DATABASE_ID` are not set, this will fail gracefully without affecting the rest of the pipeline. Log the error but do not block.
